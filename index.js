@@ -1,13 +1,17 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import morgan from "morgan";
 import { createProxyMiddleware } from "http-proxy-middleware";
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+// Middlewares
 app.use(cors());
+app.use(morgan("dev"));
+app.use(express.json());
 
 // === GESTIÓN DE USUARIOS ===
 app.use("/api/v1/auth", createProxyMiddleware({ target: "http://auth-service:3001", changeOrigin: true }));
@@ -55,6 +59,16 @@ app.use("/api/v1/logs", createProxyMiddleware({ target: "http://log-service:3028
 app.use("/api/v1/monitoring", createProxyMiddleware({ target: "http://monitoring-service:3029", changeOrigin: true }));
 app.use("/api/v1/admin", createProxyMiddleware({ target: "http://admin-dashboard-service:3030", changeOrigin: true }));
 
-app.listen(PORT, () => {
-  console.log(`✅ API Gateway corriendo en http://localhost:${PORT}`);
+// Endpoint para testear que el API Gateway está vivo
+app.get("/", (req, res) => {
+  res.send("✅ API Gateway funcionando");
 });
+
+// Solo levanta servidor si no estamos en entorno de test (para Jest)
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`✅ API Gateway corriendo en http://localhost:${PORT}`);
+  });
+}
+
+export default app;
