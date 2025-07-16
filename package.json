@@ -16,6 +16,17 @@
   },
   "devDependencies": {
     "jest": "^29.5.0",
-    "supertest": "^6.3.3"
+    "supertest": "^6.3.3",
+    "babel-jest": "^29.5.0",
+    "@babel/core": "^7.22.5",
+    "@babel/preset-env": "^7.22.5"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    },
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ]
   }
 }
